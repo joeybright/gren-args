@@ -1,0 +1,228 @@
+module Args exposing ( parse, Result )
+
+{-| Parse arguments from the terminal.
+
+@docs parse
+
+@docs Result
+
+-}
+
+import Dict exposing ( Dict )
+import Parser exposing ( Parser, (|.), (|=) )
+
+
+{-| The type of option passed.
+
+`Short` represents an option passed with a single `-` character. `Long` represents
+an option passed with two `-` characters.
+
+This package doesn't really concern itself with the difference between these two,
+but in the case it wants to in the future, these are here!
+
+-}
+type OptionType
+    = Short
+    | Long
+
+
+{-| The type of argument.
+
+A `Option` is a string prefixed with `-` of `--` characters. A `String` is everything
+else and can represent an argument or an additional value to a option depending on
+the state the parser is in.
+
+-}
+type Arg
+    = Option OptionType String String
+    | String String
+
+
+{-| An internal type to handle keep track of the state of the parser.
+
+When the state is in `ParsingArgs`, any `String` found will be considered an
+argument (as opposed to a option).
+
+As soon as the first `Option` is run into, the state of the parser changes to 
+`ParsingOptions`. This will being accumulating options and any `String` found will be 
+considered an argument to the latest option encountered.
+
+-}
+type ParseState
+    = ParsingArgs
+    | ParsingOptions String
+
+
+{-| The result of parsing a set of arguments.
+-}
+type alias Result =
+    { args : Array String
+    , options : Dict String (Array String)
+    }
+
+
+{-| Parse a single argument. This will always succeed, given if the string being 
+parsed is not a option, it will be evaluated as a normal string.
+-}
+parseArg : Parser Arg
+parseArg =
+    let
+        parseArgHelper func =
+            Parser.getChompedString (Parser.chompUntilEndOr "=")
+                |> Parser.andThen
+                        (\string ->
+                            Parser.oneOf
+                                [ Parser.succeed (func string) |. Parser.chompIf (\c -> c == '=') |= Parser.getChompedString (Parser.chompWhile (\_ -> True))
+                                , Parser.succeed (func string "")
+                                ]
+                        )
+    in
+    Parser.oneOf
+        [ Parser.chompIf (\c -> c == '-')
+            |> Parser.andThen
+                    (\_ ->
+                        Parser.oneOf
+                            [ Parser.chompIf (\c -> c == '-')
+                                |> Parser.andThen (\_ -> parseArgHelper (\k v -> Option Long k v))
+                            , parseArgHelper (\k v -> Option Short k v)
+                            ]
+                    )
+        , Parser.succeed String |= Parser.getChompedString (Parser.chompUntilEndOr " ")
+        ]
+
+
+{-| Internal function to the module that does all the parsing work.
+-}
+parseHelper : ParseState -> Result -> Array String -> Result
+parseHelper parseState acc passedArray =
+    let
+        process :
+            Result
+            -> String
+            -> { result : Result
+               , state : ParseState
+               }
+        process parseResult item =
+            case
+                { state = parseState
+                , value = Parser.run parseArg item
+                }
+            of
+                { state, value = Ok (String "") } ->
+                    {- Whenever an empty string is encountered, ignore it -}
+                    { state = state
+                    , result = parseResult
+                    }
+
+                { state = ParsingArgs, value = Ok (Option _ key "") } ->
+                    {- When parsing arguments and a option is found with no arguments, add the 
+                    option with an empty arguments array to the parsed options and switch the 
+                    parse state.
+                    -}
+                    { state = ParsingOptions key
+                    , result = { parseResult | options = Dict.insert key [] parseResult.options }
+                    }
+
+                { state = ParsingArgs, value = Ok (Option _ key value) } ->
+                    {- When parsing arguments and a option is found with an argument, add the 
+                    option with an empty arguments array to the parsed options and switch the
+                    parse state.
+                    -}
+                    { state = ParsingOptions key
+                    , result =
+                        { parseResult
+                            | options =
+                                Dict.insert
+                                    key
+                                    [ value
+                                    ]
+                                    parseResult.options
+                        }
+                    }
+
+                { state = ParsingArgs, value = Ok (String arg) } ->
+                    {- When parsing arguments and a string is found, it's considered an
+                    argument. Add it to the list of arguments already parsed.
+                    -}
+                    { state = ParsingArgs
+                    , result = { parseResult | args = Array.pushLast arg parseResult.args }
+                    }
+
+                { state = ParsingOptions _, value = Ok (Option _ key "") } ->
+                    {- When parsing options and a option is found with no arguments, add the 
+                    option with an empty arguments array to the parsed options and update the latest
+                    option with the newly parsed option
+                    -}
+                    { state = ParsingOptions key
+                    , result = { parseResult | options = Dict.insert key [] parseResult.options }
+                    }
+
+                { state = ParsingOptions latestOption, value = Ok (Option _ key value) } ->
+                    {- When parsing options, if you find a new option, set the option being parsed
+                    to the key of the new option.
+                    -}
+                    { state = ParsingOptions key
+                    , result =
+                        { parseResult
+                            | options =
+                                {- Check to see if this new option already exists. If it does, I
+                                want to add any found arguments to it. Otherwise, insert a new
+                                option with the found value.
+                                -}
+                                Dict.get key parseResult.options
+                                    |> Maybe.map (\_ -> Dict.update key (Maybe.map (Array.pushLast value)) parseResult.options)
+                                    |> Maybe.withDefault
+                                            (Dict.insert
+                                                key
+                                                [ value
+                                                ]
+                                                parseResult.options
+                                            )
+                        }
+                    }
+
+                { state = ParsingOptions latestOption, value = Ok (String arg) } ->
+                    {- When parsing options, if a string is found, add it as a value to the
+                    last parsed option.
+                    -}
+                    { state = ParsingOptions latestOption
+                    , result = { parseResult | options = Dict.update latestOption (Maybe.map (Array.pushLast arg)) parseResult.options }
+                    }
+
+                { state, value = Err _ } ->
+                    {- If there's an error, just ignore it.
+                    -}
+                    { state = state
+                    , result = parseResult
+                    }
+    in
+    {- This function drops the first two elements of the passed array which are 
+    the node path and the script path. This may cause unintentional behavior if 
+    people use it outside of the `gren/node` package.
+    -}
+    case Array.popFirst passedArray of
+        Just { first, rest } ->
+            let
+                { state, result } =
+                    process acc first
+            in
+            parseHelper state result rest
+
+        Nothing ->
+            acc
+
+
+{-| Parse an array of strings that's returned by the `gren-lang/node` `Terminal` 
+module.
+
+For examples and more detailed documentation on thos this works, check the 
+package README.
+
+-}
+parse : Array String -> Result
+parse =
+    parseHelper
+        ParsingArgs
+        { args = []
+        , options = Dict.empty
+        }

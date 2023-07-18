@@ -1,0 +1,19 @@
+{
+    "type": "application",
+    "platform": "node",
+    "source-directories": [
+        "src"
+    ],
+    "gren-version": "0.3.0",
+    "dependencies": {
+        "direct": {
+            "joeybright/gren-args": "local:../",
+            "gren-lang/core": "4.0.0",
+            "gren-lang/node": "2.0.0",
+            "gren-lang/test": "2.0.0",
+            "gren-lang/test-runner-node": "2.0.0",
+            "gren-lang/parser": "3.0.0"
+        },
+        "indirect": {}
+    }
+}

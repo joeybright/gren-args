@@ -1,0 +1,298 @@
+module Main exposing ( main )
+
+{-| Tests for the `gren-args-parser` package.
+-}
+
+import Args
+import Dict
+import Expect
+import Fuzz
+import Parser
+import Test exposing ( Test, todo, describe, test, fuzz )
+import Test.Runner.Node exposing ( Program, run )
+
+
+{-| -}
+main : Program
+main =
+    run
+        <| describe
+                "Tests"
+                [ test
+                    "Can parse a single argument without options"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options = Dict.empty
+                                    }
+                    )
+                , test
+                    "Can parse a single argument with a single option with no values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "--test"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value = []
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a single argument with a single option with a single value"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "--test"
+                            , "help"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "help"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a single argument with a single option with multiple values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "--test"
+                            , "help"
+                            , "second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "help"
+                                                    , "second"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a single argument with a multiple options with no values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "--test"
+                            , "--second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value = []
+                                              }
+                                            , { key = "second"
+                                              , value = []
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a single argument with a multiple options with values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "--test"
+                            , "value"
+                            , "--second"
+                            , "first"
+                            , "second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "value"
+                                                    ]
+                                              }
+                                            , { key = "second"
+                                              , value =
+                                                    [ "first"
+                                                    , "second"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                    -- 
+                , test
+                    "Can parse multiple arguments without options"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options = Dict.empty
+                                    }
+                    )
+                , test
+                    "Can parse a multiple arguments with a single option with no values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            , "--test"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value = []
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse multiple arguments with a single option with a single value"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            , "--test"
+                            , "help"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "help"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse multiple arguments with a single option with multiple values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            , "--test"
+                            , "help"
+                            , "second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "help"
+                                                    , "second"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a mutiple arguments with a multiple options with no values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            , "--test"
+                            , "--second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value = []
+                                              }
+                                            , { key = "second"
+                                              , value = []
+                                              }
+                                            ]
+                                    }
+                    )
+                , test
+                    "Can parse a multiple arguments with a multiple options with values"
+                    (\_ ->
+                        Args.parse
+                            [ "run"
+                            , "help"
+                            , "--test"
+                            , "value"
+                            , "--second"
+                            , "first"
+                            , "second"
+                            ]
+                            |> Expect.equal
+                                    { args =
+                                        [ "run"
+                                        , "help"
+                                        ]
+                                    , options =
+                                        Dict.fromArray
+                                            [ { key = "test"
+                                              , value =
+                                                    [ "value"
+                                                    ]
+                                              }
+                                            , { key = "second"
+                                              , value =
+                                                    [ "first"
+                                                    , "second"
+                                                    ]
+                                              }
+                                            ]
+                                    }
+                    )
+                ]

@@ -1,0 +1,16 @@
+{
+    "type": "package",
+    "platform": "common",
+    "name": "joeybright/gren-args",
+    "summary": "Parse arguments from the gren/node package",
+    "license": "BSD-3-Clause",
+    "version": "1.0.0",
+    "exposed-modules": [
+        "Args"
+    ],
+    "gren-version": "0.3.0 <= v < 0.4.0",
+    "dependencies": {
+        "gren-lang/core": "4.0.0 <= v < 5.0.0",
+        "gren-lang/parser": "3.0.0 <= v < 4.0.0"
+    }
+}
