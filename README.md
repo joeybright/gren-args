@@ -1,6 +1,6 @@
 # gren-args
 
-A package for parsing arguments passed from the [gren/node](https://packages.gren-lang.org/package/gren-lang/node/version/2.0.0/module/Node) package.
+A package for parsing arguments passed from the [gren/node](https://packages.gren-lang.org/package/gren-lang/node/version/3.0.0/module/Node) package.
 
 ### Getting started
 
@@ -53,8 +53,8 @@ As an example, running `program-name compile --input ./src/* -o ./dist.json` wou
 
     { args = [ "compile" ]
     , options = Dict.fromArray
-        [ { key = "input", value = [ "./src/*" ] }
-        , { key = "o", value = [ "./dist.json" ] }
+        [ { key = "input", value = { optionType = Args.LongOption, values = [ "./src/*" ] } }
+        , { key = "o", value = { optionType = Args.ShortOption, values = [ "./dist.json" ] } }
         ]
     }
 
@@ -66,7 +66,7 @@ For example, parsing `program-name test --files a b c` would result in the follo
 
     { args = [ "test" ]
     , options = Dict.fromArray
-        [ { key = "files", value = [ "a", "b", "c" ] }
+        [ { key = "files", value = { optionType = Args.LongOption, values = [ "a", "b", "c" ]} }
         ]
     }
 
@@ -74,7 +74,7 @@ If you want a specific option to only accept a single value (or no values), you 
 
 ##### Shortcut options
 
-This package does not specify any difference between using a single `-` character or `--` when prefixing options. 
+This package captures and returns the difference between `-` character or `--` when prefixing options and returns it as part the captured option.
 
 It's a convention that options prefixed with the `-` character are single-character shortcuts (like using `-o` in the above example instead of `--output`), but this package does not enforce this behavior. Keep this in mind when desgning your program - you may want to check for both the full option name (`--output`) and its shortcut (`-o`).
 
@@ -82,7 +82,7 @@ It's a convention that options prefixed with the `-` character are single-charac
 
 This packages handles options with a `=` in them. An option of `--name=John` will parse into `{ key = "name", value = [ "John" ] }`.
 
-This also works when multiple values are passed. For example, a option of `--names=John Joan` will parse into ``{ key = "name", value = [ "John", "Joan" ] }``.
+This also works when multiple values are passed. For example, a option of `--names=John Joan` will parse into ``{ key = "names", value = [ "John", "Joan" ] }``.
 
 ### Example
 
@@ -111,7 +111,7 @@ This functionality can be built with a single `case` statement.
                 -- This is the result of `gren init` being run
                 initGrenProgram
 
-            { args = [ parsedArg ], help = Just [] } ->
+            { args = [ parsedArg ], help = Just { optionType = _, values = [] }} ->
                 -- This is the result of passing any single argument to `gren` and including
                 -- the `--help` options. For example, `gren init --help` or `gren make --help`
                 -- would both trigger this branch. In this case, you might want to display

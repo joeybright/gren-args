@@ -45,7 +45,10 @@ main =
                                     , options =
                                         Dict.fromArray
                                             [ { key = "test"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOptionOption
+                                                    , values = []
+                                                    }
                                               }
                                             ]
                                     }
@@ -66,8 +69,11 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "help"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "help"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
@@ -89,9 +95,12 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "help"
-                                                    , "second"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "help"
+                                                        , "second"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
@@ -111,10 +120,16 @@ main =
                                     , options =
                                         Dict.fromArray
                                             [ { key = "test"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOption
+                                                    , values = []
+                                                    }
                                               }
                                             , { key = "second"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOption
+                                                    , values = []
+                                                    }
                                               }
                                             ]
                                     }
@@ -138,14 +153,20 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "value"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "value"
+                                                        ]
+                                                    }
                                               }
                                             , { key = "second"
                                               , value =
-                                                    [ "first"
-                                                    , "second"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "first"
+                                                        , "second"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
@@ -182,7 +203,10 @@ main =
                                     , options =
                                         Dict.fromArray
                                             [ { key = "test"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOption
+                                                    , values = []
+                                                    }
                                               }
                                             ]
                                     }
@@ -205,8 +229,11 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "help"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "help"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
@@ -230,9 +257,12 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "help"
-                                                    , "second"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "help"
+                                                        , "second"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
@@ -254,10 +284,16 @@ main =
                                     , options =
                                         Dict.fromArray
                                             [ { key = "test"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOption
+                                                    , values = []
+                                                    }
                                               }
                                             , { key = "second"
-                                              , value = []
+                                              , value =
+                                                    { optionType = Args.LongOption
+                                                    , values = []
+                                                    }
                                               }
                                             ]
                                     }
@@ -268,7 +304,7 @@ main =
                         Args.parse
                             [ "run"
                             , "help"
-                            , "--test"
+                            , "-test"
                             , "value"
                             , "--second"
                             , "first"
@@ -283,14 +319,20 @@ main =
                                         Dict.fromArray
                                             [ { key = "test"
                                               , value =
-                                                    [ "value"
-                                                    ]
+                                                    { optionType = Args.ShortOption
+                                                    , values =
+                                                        [ "value"
+                                                        ]
+                                                    }
                                               }
                                             , { key = "second"
                                               , value =
-                                                    [ "first"
-                                                    , "second"
-                                                    ]
+                                                    { optionType = Args.LongOption
+                                                    , values =
+                                                        [ "first"
+                                                        , "second"
+                                                        ]
+                                                    }
                                               }
                                             ]
                                     }
