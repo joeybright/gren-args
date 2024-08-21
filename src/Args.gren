@@ -125,7 +125,7 @@ parseHelper parseState acc passedArray =
                     , result =
                         { parseResult
                             | options =
-                                Dict.insert
+                                Dict.set
                                     key
                                     { optionType = optionType
                                     , values = []
@@ -143,7 +143,7 @@ parseHelper parseState acc passedArray =
                     , result =
                         { parseResult
                             | options =
-                                Dict.insert
+                                Dict.set
                                     key
                                     { optionType = optionType
                                     , values =
@@ -171,7 +171,7 @@ parseHelper parseState acc passedArray =
                     , result =
                         { parseResult
                             | options =
-                                Dict.insert
+                                Dict.set
                                     key
                                     { optionType = optionType
                                     , values = []
@@ -207,7 +207,7 @@ parseHelper parseState acc passedArray =
                                                     parseResult.options
                                             )
                                     |> Maybe.withDefault
-                                            (Dict.insert
+                                            (Dict.set
                                                 key
                                                 { optionType = optionType
                                                 , values =
