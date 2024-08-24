@@ -37,7 +37,7 @@ Arguments have the following properties:
 As an example, parsing the values returned from running `Args.parse` after running the following command: `program-name make` would have the following result:
 
     { args = [ "make" ]
-    , options = Dict.fromArray []
+    , options = Dict.empty
     }
 
 #### Options
@@ -52,10 +52,10 @@ Options have the following properties:
 As an example, running `program-name compile --input ./src/* -o ./dist.json` would have the following result:
 
     { args = [ "compile" ]
-    , options = Dict.fromArray
-        [ { key = "input", value = { optionType = Args.LongOption, values = [ "./src/*" ] } }
-        , { key = "o", value = { optionType = Args.ShortOption, values = [ "./dist.json" ] } }
-        ]
+    , options = 
+        Dict.empty
+            |> Dict.set "input" { optionType = Args.LongOption, values = [ "./src/*" ] }
+            |> Dict.set "o" { optionType = Args.ShortOption, values = [ "./dist.json" ] }
     }
 
 ##### Parsing multiple values
@@ -65,9 +65,9 @@ This package will assume that any non-option value (not prefixed with a `--`) th
 For example, parsing `program-name test --files a b c` would result in the following:
 
     { args = [ "test" ]
-    , options = Dict.fromArray
-        [ { key = "files", value = { optionType = Args.LongOption, values = [ "a", "b", "c" ]} }
-        ]
+    , options = 
+        Dict.empty
+            |> Dict.set "files" { optionType = Args.LongOption, values = [ "a", "b", "c" ] }
     }
 
 If you want a specific option to only accept a single value (or no values), you can check for the length of the resulting `Array` associated with a option with a `case` statement.

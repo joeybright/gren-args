@@ -43,14 +43,11 @@ main =
                                         [ "run"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOptionOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
                                     }
                     )
                 , test
@@ -66,16 +63,13 @@ main =
                                         [ "run"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "help"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "help"
+                                                    ]
+                                                }
                                     }
                     )
                 , test
@@ -92,17 +86,14 @@ main =
                                         [ "run"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "help"
-                                                        , "second"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "help"
+                                                    , "second"
+                                                    ]
+                                                }
                                     }
                     )
                 , test
@@ -118,20 +109,15 @@ main =
                                         [ "run"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            , { key = "second"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
+                                            |> Dict.set "second"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
                                     }
                     )
                 , test
@@ -150,25 +136,20 @@ main =
                                         [ "run"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "value"
-                                                        ]
-                                                    }
-                                              }
-                                            , { key = "second"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "first"
-                                                        , "second"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "value"
+                                                    ]
+                                                }
+                                            |> Dict.set "second"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "first"
+                                                    , "second"
+                                                    ]
+                                                }
                                     }
                     )
                     -- 
@@ -201,14 +182,11 @@ main =
                                         , "help"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
                                     }
                     )
                 , test
@@ -226,16 +204,13 @@ main =
                                         , "help"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "help"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "help"
+                                                    ]
+                                                }
                                     }
                     )
                 , test
@@ -254,17 +229,14 @@ main =
                                         , "help"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "help"
-                                                        , "second"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "help"
+                                                    , "second"
+                                                    ]
+                                                }
                                     }
                     )
                 , test
@@ -282,20 +254,15 @@ main =
                                         , "help"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            , { key = "second"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values = []
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
+                                            |> Dict.set "second"
+                                                { optionType = Args.LongOption
+                                                , values = []
+                                                }
                                     }
                     )
                 , test
@@ -316,25 +283,20 @@ main =
                                         , "help"
                                         ]
                                     , options =
-                                        Dict.fromArray
-                                            [ { key = "test"
-                                              , value =
-                                                    { optionType = Args.ShortOption
-                                                    , values =
-                                                        [ "value"
-                                                        ]
-                                                    }
-                                              }
-                                            , { key = "second"
-                                              , value =
-                                                    { optionType = Args.LongOption
-                                                    , values =
-                                                        [ "first"
-                                                        , "second"
-                                                        ]
-                                                    }
-                                              }
-                                            ]
+                                        Dict.empty
+                                            |> Dict.set "test"
+                                                { optionType = Args.ShortOption
+                                                , values =
+                                                    [ "value"
+                                                    ]
+                                                }
+                                            |> Dict.set "second"
+                                                { optionType = Args.LongOption
+                                                , values =
+                                                    [ "first"
+                                                    , "second"
+                                                    ]
+                                                }
                                     }
                     )
                 ]
