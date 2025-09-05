@@ -31,7 +31,11 @@ the state the parser is in.
 
 -}
 type Arg
-    = Option OptionType String String
+    = Option 
+        { type_ : OptionType
+        , key: String
+        , value: String
+        }
     | String String
 
 
@@ -85,8 +89,22 @@ parseArg =
                     (\_ ->
                         Parser.oneOf
                             [ Parser.chompIf (\c -> c == '-')
-                                |> Parser.andThen (\_ -> parseArgHelper (\k v -> Option LongOption k v))
-                            , parseArgHelper (\k v -> Option ShortOption k v)
+                                |> Parser.andThen (\_ -> parseArgHelper 
+                                    (\k v -> 
+                                        Option 
+                                            { type_ = LongOption
+                                            , key = k
+                                            , value = v
+                                            }
+                                    )
+                                )
+                            , parseArgHelper (\k v -> 
+                                Option 
+                                    { type_ = ShortOption
+                                    , key = k
+                                    , value = v
+                                    }
+                                )
                             ]
                     )
         , Parser.succeed String |= Parser.getChompedString (Parser.chompUntilEndOr " ")
@@ -105,18 +123,18 @@ parseHelper parseState acc passedArray =
                , state : ParseState
                }
         process parseResult item =
-            case
+            when
                 { state = parseState
                 , value = Parser.run parseArg item
                 }
-            of
+            is
                 { state, value = Ok (String "") } ->
                     {- Whenever an empty string is encountered, ignore it -}
                     { state = state
                     , result = parseResult
                     }
 
-                { state = ParsingArgs, value = Ok (Option optionType key "") } ->
+                { state = ParsingArgs, value = Ok (Option { type_ = optionType, key = key, value = "" }) } ->
                     {- When parsing arguments and a option is found with no arguments, add the
                     option with an empty arguments array to the parsed options and switch the
                     parse state.
@@ -134,7 +152,7 @@ parseHelper parseState acc passedArray =
                         }
                     }
 
-                { state = ParsingArgs, value = Ok (Option optionType key value) } ->
+                { state = ParsingArgs, value = Ok (Option { type_ = optionType, key = key, value = value }) } ->
                     {- When parsing arguments and a option is found with an argument, add the
                     option with an empty arguments array to the parsed options and switch the
                     parse state.
@@ -162,7 +180,7 @@ parseHelper parseState acc passedArray =
                     , result = { parseResult | args = Array.pushLast arg parseResult.args }
                     }
 
-                { state = ParsingOptions _, value = Ok (Option optionType key "") } ->
+                { state = ParsingOptions _, value = Ok (Option { type_ = optionType, key = key, value = "" }) } ->
                     {- When parsing options and a option is found with no arguments, add the
                     option with an empty arguments array to the parsed options and update the latest
                     option with the newly parsed option
@@ -180,7 +198,7 @@ parseHelper parseState acc passedArray =
                         }
                     }
 
-                { state = ParsingOptions latestOption, value = Ok (Option optionType key value) } ->
+                { state = ParsingOptions latestOption, value = Ok (Option { type_ = optionType, key = key, value = value }) } ->
                     {- When parsing options, if you find a new option, set the option being parsed
                     to the key of the new option.
                     -}
@@ -247,7 +265,7 @@ parseHelper parseState acc passedArray =
                     , result = parseResult
                     }
     in
-    case Array.popFirst passedArray of
+    when Array.popFirst passedArray is
         Just { first, rest } ->
             let
                 { state, result } =
