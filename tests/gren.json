@@ -4,18 +4,18 @@
     "source-directories": [
         "src"
     ],
-    "gren-version": "0.4.4",
+    "gren-version": "0.6.2",
     "dependencies": {
         "direct": {
             "joeybright/gren-args": "local:../",
-            "gren-lang/core": "5.0.2",
-            "gren-lang/node": "4.1.1",
-            "gren-lang/test": "3.0.0",
-            "gren-lang/test-runner-node": "4.0.0",
-            "gren-lang/parser": "4.0.0"
+            "gren-lang/core": "7.0.0",
+            "gren-lang/node": "6.0.0",
+            "gren-lang/test": "5.0.0",
+            "gren-lang/test-runner-node": "7.0.0",
+            "gren-lang/parser": "6.0.0"
         },
         "indirect": {
-            "gren-lang/url": "4.0.0"
+            "gren-lang/url": "6.0.0"
         }
     }
 }
